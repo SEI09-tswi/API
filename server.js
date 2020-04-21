@@ -36,6 +36,15 @@ mongoose.connect(db, {
 // instantiate express application object
 const app = express()
 
+
+//**************************** testing *********************
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
+//**************************** testing *********************
+
+
+
+
 // set CORS headers on response from this API using the `cors` NPM package
 // `CLIENT_ORIGIN` is an environment variable that will be set on Heroku
 app.use(cors({ origin: process.env.CLIENT_ORIGIN || `http://localhost:${clientDevPort}` }))
@@ -73,9 +82,28 @@ app.use(chatroomRoutes)
 app.use(errorHandler)
 
 // run API on designated port (4741 in this case)
-app.listen(port, () => {
-  console.log('listening on port ' + port)
-})
+//**************************** testing *********************
+
+io.on("connection", function(socket) {
+ console.log("socket connected");
+});
+http.listen(port, () => console.log("listening on http://localhost:"+port));
+
+io.on("connection", function(socket) {
+io.emit("user connected");
+});
+
+io.on("connection", function(socket) {
+ io.emit("user connected");
+ socket.on("message", function(msg) {
+   io.emit("message", msg);
+ });
+});
+//**************************** testing *********************
+
+// app.listen(port, () => {
+//   console.log('listening on port ' + port)
+// })
 
 // needed for testing
 module.exports = app
