@@ -4,8 +4,8 @@ const chatSchema = new mongoose.Schema({
 
   message:
     {
-    type: String
-  //  user: String
+    type: String,
+  user: String
   }
 
 
