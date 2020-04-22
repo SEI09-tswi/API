@@ -8,6 +8,7 @@ const exampleRoutes = require('./app/routes/example_routes')
 const userRoutes = require('./app/routes/user_routes')
 const chatroomRoutes = require('./app/routes/chatroom_routes')
 
+
 // require middleware
 const errorHandler = require('./lib/error_handler')
 const replaceToken = require('./lib/replace_token')
@@ -36,13 +37,11 @@ mongoose.connect(db, {
 // instantiate express application object
 const app = express()
 
+// require socket
+var http = require('http').createServer(app);
+var io = require('socket.io')(http);
 
-//**************************** testing *********************
-const http = require("http").createServer(app);
-const io = require("socket.io")(http);
-//**************************** testing *********************
-
-
+// socket listening for a connection
 
 
 // set CORS headers on response from this API using the `cors` NPM package
@@ -74,36 +73,21 @@ app.use(requestLogger)
 app.use(exampleRoutes)
 app.use(userRoutes)
 app.use(chatroomRoutes)
-
-
 // register error handling middleware
 // note that this comes after the route middlewares, because it needs to be
 // passed any error messages from them
 app.use(errorHandler)
 
-// run API on designated port (4741 in this case)
-//**************************** testing *********************
+http.listen(port, () => {
+   console.log('listening on port ' + port)
+ })
 
-io.on("connection", function(socket) {
- console.log("socket connected");
-});
-http.listen(port, () => console.log("listening on http://localhost:"+port));
-
-io.on("connection", function(socket) {
-io.emit("user connected");
-});
-
-io.on("connection", function(socket) {
- io.emit("user connected");
- socket.on("message", function(msg) {
-   io.emit("message", msg);
+ io.on('connection', (socket) => {
+     socket.on('chat message', (msg) => {
+           io.emit('chat message', msg);
+        console.log('message: ' + msg);
+   });
+   console.log('a user connected');
  });
-});
-//**************************** testing *********************
-
-// app.listen(port, () => {
-//   console.log('listening on port ' + port)
-// })
-
 // needed for testing
 module.exports = app
