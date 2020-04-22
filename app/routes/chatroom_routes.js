@@ -29,8 +29,8 @@ const router = express.Router()
 
 // INDEX
 // GET /chats
-router.get('/chats', requireToken, (req, res, next) => {
-//router.get('/chats', (req, res, next) => {
+//router.get('/chats', requireToken, (req, res, next) => {
+router.get('/chats', (req, res, next) => {
 Chat.find()
     .then(chats => {
       // `chats` will be an array of Mongoose documents

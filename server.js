@@ -37,12 +37,6 @@ mongoose.connect(db, {
 const app = express()
 
 
-//**************************** testing *********************
-const http = require("http").createServer(app);
-const io = require("socket.io")(http);
-//**************************** testing *********************
-
-
 
 
 // set CORS headers on response from this API using the `cors` NPM package
@@ -83,22 +77,27 @@ app.use(errorHandler)
 
 // run API on designated port (4741 in this case)
 //**************************** testing *********************
+const server = app.listen(port)
+const io = require('socket.io').listen(server)
+//console.log(server)
+io.sockets.on('connection', function (socket) {
+   console.log('SOCKET IS ' + socket.connected)
+  io.emit('user connected')
+  socket.on('disconnect', function () {
+    io.emit('user disconnected')
+  })
+  socket.on('chat message', (msg) => {
+    io.emit('message' + msg)
+  })
 
-io.on("connection", function(socket) {
- console.log("socket connected");
-});
-http.listen(port, () => console.log("listening on http://localhost:"+port));
+})
 
-io.on("connection", function(socket) {
-io.emit("user connected");
-});
+// io.on("connection", function(socket) {
+//  io.emit("user connected");
+//  socket.on("message", function(msg) {
+//    io.emit("message", msg);
+//  });
 
-io.on("connection", function(socket) {
- io.emit("user connected");
- socket.on("message", function(msg) {
-   io.emit("message", msg);
- });
-});
 //**************************** testing *********************
 
 // app.listen(port, () => {
