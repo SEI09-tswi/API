@@ -26,19 +26,32 @@ const requireToken = passport.authenticate('bearer', { session: false })
 
 // instantiate a router (mini app that only handles routes)
 const router = express.Router()
+//******************************for socket ========================
+const socketIndex =function (){
+  // Chat.find()
+  // .then(chats => {
+  //   // `chats` will be an array of Mongoose documents
+  //   // we want to convert each one to a POJO, so we use `.map` to
+  //   // apply `.toObject` to each one
+  //   //console.log("hd"+chats)
+  //   return chats.map(chat => chat.toObject())
+  // })
+return "lalala345"
+}
 
 
-
+//****************************************
 // INDEX
 // GET /chats
-//router.get('/chats', requireToken, (req, res, next) => {
-router.get('/chats', (req, res, next) => {
+router.get('/chats', requireToken, (req, res, next) => {
+//router.get('/chats', (req, res, next) => {
 Chat.find()
 
     .then(chats => {
       // `chats` will be an array of Mongoose documents
       // we want to convert each one to a POJO, so we use `.map` to
       // apply `.toObject` to each one
+      //console.log("hd"+chats)
       return chats.map(chat => chat.toObject())
     })
     // respond with status 200 and JSON of the chats

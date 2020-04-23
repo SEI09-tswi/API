@@ -77,13 +77,34 @@ app.use(chatroomRoutes)
 // passed any error messages from them
 app.use(errorHandler)
 
+
+//*********
+const Chat = require('./app/models/chatroom')
+
+const socketIndex =function (){
+  Chat.find()
+  .then(chats => {
+    // `chats` will be an array of Mongoose documents
+    // we want to convert each one to a POJO, so we use `.map` to
+    // apply `.toObject` to each one
+  io.emit('chat message', chats.map(chat => chat.toObject()))
+  })
+return "lalala345"
+}
+
+
+
+//=================
+
 http.listen(port, () => {
    console.log('listening on port ' + port)
  })
-
+//userRoutes.socketIndex()
  io.on('connection', (socket) => {
      socket.on('chat message', (msg) => {
-           io.emit('chat message', msg);
+
+          socketIndex();
+      //  io.emit('chat message',msg )
         console.log('message: ' + msg);
    });
    console.log('a user connected');
