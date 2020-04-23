@@ -2,14 +2,8 @@ const mongoose = require('mongoose')
 
 const chatSchema = new mongoose.Schema({
 
-  message:
-    {
-    type: String,
-  user: String
-  }
-
-
-  ,
+  message: String,
+  user: String,
   owner:
      {
     type: mongoose.Schema.Types.ObjectId,

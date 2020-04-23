@@ -8,6 +8,7 @@ const exampleRoutes = require('./app/routes/example_routes')
 const userRoutes = require('./app/routes/user_routes')
 const chatroomRoutes = require('./app/routes/chatroom_routes')
 
+
 // require middleware
 const errorHandler = require('./lib/error_handler')
 const replaceToken = require('./lib/replace_token')
@@ -36,6 +37,9 @@ mongoose.connect(db, {
 // instantiate express application object
 const app = express()
 
+// require socket
+var http = require('http').createServer(app);
+var io = require('socket.io')(http);
 
 
 
@@ -68,41 +72,27 @@ app.use(requestLogger)
 app.use(exampleRoutes)
 app.use(userRoutes)
 app.use(chatroomRoutes)
-
-
 // register error handling middleware
 // note that this comes after the route middlewares, because it needs to be
 // passed any error messages from them
 app.use(errorHandler)
 
-// run API on designated port (4741 in this case)
-//**************************** testing *********************
-const server = app.listen(port)
-const io = require('socket.io').listen(server)
-//console.log(server)
-io.sockets.on('connection', function (socket) {
-   console.log('SOCKET IS ' + socket.connected)
-  io.emit('user connected')
-  socket.on('disconnect', function () {
-    io.emit('user disconnected')
-  })
-  socket.on('chat message', (msg) => {
-    io.emit('message' + msg)
-  })
+http.listen(port, () => {
+   console.log('listening on port ' + port)
+ })
 
-})
+ io.on('connection', (socket) => {
+     socket.on('chat message', (msg) => {
+           io.emit('chat message', msg);
+        console.log('message: ' + msg);
+   });
+   console.log('a user connected');
+ });
 
-// io.on("connection", function(socket) {
-//  io.emit("user connected");
-//  socket.on("message", function(msg) {
-//    io.emit("message", msg);
-//  });
 
-//**************************** testing *********************
-
-// app.listen(port, () => {
-//   console.log('listening on port ' + port)
-// })
+ app.listen(port, () => {
+   console.log('listening on port ' + port)
+ })
 
 // needed for testing
 module.exports = app
