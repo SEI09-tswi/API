@@ -41,7 +41,6 @@ const app = express()
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 
-// socket listening for a connection
 
 
 // set CORS headers on response from this API using the `cors` NPM package
@@ -89,5 +88,11 @@ http.listen(port, () => {
    });
    console.log('a user connected');
  });
+
+
+ app.listen(port, () => {
+   console.log('listening on port ' + port)
+ })
+
 // needed for testing
 module.exports = app
